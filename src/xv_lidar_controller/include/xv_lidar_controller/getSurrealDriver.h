@@ -1,11 +1,10 @@
-#include <string>
 #include "serial/serial.h"
 
-using std::string;
-
 class GetSurrealDriver {
-    void MotorOn();
-    void MotorOff();
+    serial::Serial serialCon;
   public:
     GetSurrealDriver();
+    virtual ~GetSurrealDriver();
+    void MotorOn();
+    void MotorOff();
 };

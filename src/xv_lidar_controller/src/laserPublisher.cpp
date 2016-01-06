@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
-#include "xv_lidar_controller/getSurrealDriver.h"
+#include <xv_lidar_controller/getSurrealDriver.h>
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "laser_scan_publisher");
@@ -13,6 +13,9 @@ int main(int argc, char** argv){
   double ranges[num_readings];
   double intensities[num_readings];
 
+  GetSurrealDriver foo;
+  foo.MotorOff();
+
   int count = 0;
   ros::Rate r(1.0);
   while(n.ok()){
@@ -20,10 +23,8 @@ int main(int argc, char** argv){
     for(unsigned int i = 0; i < num_readings; ++i){
       ranges[i] = count;
       intensities[i] = 100 + count;
-    }
-
-    // Test
-    GetSurrealDriver foo();
+    }   
+    
     ros::Time scan_time = ros::Time::now();
 
     //populate the LaserScan message
