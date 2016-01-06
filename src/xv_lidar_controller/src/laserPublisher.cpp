@@ -14,7 +14,7 @@ int main(int argc, char** argv){
   double intensities[num_readings];
 
   GetSurrealDriver foo;
-  foo.MotorOff();
+  foo.MotorOn();
 
   int count = 0;
   ros::Rate r(1.0);
