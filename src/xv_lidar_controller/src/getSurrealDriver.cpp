@@ -2,6 +2,7 @@
 #include <xv_lidar_controller/getSurrealDriver.h>
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 
 using std::string;
 using std::cout;
@@ -31,22 +32,64 @@ static const string CMD_MOTOR_ON = "MotorOn\n";
 static const string CMD_HIDE_RAW = "HideRaw";
 static const string CMD_SHOW_RAW = "ShowRaw";
 
+static const string TIME = "Time";
+static const string RPM = "RPM";
+
 GetSurrealDriver::GetSurrealDriver() : serialCon(PORTNAME, BAUDRATE, serial::Timeout::simpleTimeout(TIMEOUT)) {
 }
 GetSurrealDriver::~GetSurrealDriver() {};
 
 
-void GetSurrealDriver::MotorOn() {
-  cout << "Is the serial port open?";
-  if(serialCon.isOpen())
-    cout << " Yes." << std::endl;
-  else
-    cout << " No." << std::endl;
-  string cmdOn = CMD_MOTOR_ON;
-  serialCon.write(cmdOn);
+void GetSurrealDriver::motorOn() {
+  if(serialCon.isOpen()) {
+    serialCon.write(CMD_MOTOR_ON);
+  }  
 }
 
-void GetSurrealDriver::MotorOff() {
-  string cmdOff = CMD_MOTOR_OFF;
-  serialCon.write(cmdOff);
+void GetSurrealDriver::motorOff() {
+  if(serialCon.isOpen()) {
+    serialCon.write(CMD_MOTOR_OFF);
+  }
 }
+
+bool GetSurrealDriver::readNextValues(int *angle, double *range, double *intensity) {
+    if(serialCon.isOpen()) {
+        // Read data from serial interface
+        string data = serialCon.readline();
+        // If data contains either the Word Time or RPM return false
+        std::size_t found = data.find(TIME);
+        if (found!=std::string::npos) return false;
+        found = data.find(RPM);
+        if (found!=std::string::npos) return false;
+
+        // Get the angle value
+        found = data.find(":");
+        std::istringstream(data.substr(0, found)) >> *angle;
+
+        // Get the range value
+        std::size_t start = found+2;
+        found = data.find("(", start);
+        double range_mm = std::atof(data.substr(start, found-1).c_str());
+        *range = range_mm / 1000.0;
+
+        // Get the intensity value
+        start = found+1;
+        found = data.find(")", start);
+        *intensity = std::atof(data.substr(start, found).c_str());
+        
+        return true;
+    }
+    return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+

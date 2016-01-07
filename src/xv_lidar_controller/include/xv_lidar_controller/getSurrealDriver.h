@@ -5,6 +5,7 @@ class GetSurrealDriver {
   public:
     GetSurrealDriver();
     virtual ~GetSurrealDriver();
-    void MotorOn();
-    void MotorOff();
+    void motorOn();
+    void motorOff();
+    bool readNextValues(int *angle, double *range, double *intensity);
 };

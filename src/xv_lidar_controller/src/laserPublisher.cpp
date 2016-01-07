@@ -8,21 +8,26 @@ int main(int argc, char** argv){
   ros::NodeHandle n;
   ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 50);
 
-  unsigned int num_readings = 100;
-  double laser_frequency = 40;
+  GetSurrealDriver driver;
+
+  unsigned int num_readings = 360;
+  double laser_frequency = 5;
   double ranges[num_readings];
   double intensities[num_readings];
 
-  GetSurrealDriver foo;
-  foo.MotorOn();
+  driver.motorOn();
 
-  int count = 0;
-  ros::Rate r(1.0);
   while(n.ok()){
-    //generate some fake data for our laser scan
-    for(unsigned int i = 0; i < num_readings; ++i){
-      ranges[i] = count;
-      intensities[i] = 100 + count;
+    /*for(unsigned int i = 0; i < num_readings; ++i){
+      ranges[i] = 1;
+      intensities[i] = 100 + 1;
+    }*/
+
+    int angle; double range; double intensity;
+
+    while(driver.readNextValues(&angle, &range, &intensity)) {
+      ranges[angle] = range;
+      intensities[angle] = intensity;
     }   
     
     ros::Time scan_time = ros::Time::now();
@@ -31,8 +36,8 @@ int main(int argc, char** argv){
     sensor_msgs::LaserScan scan;
     scan.header.stamp = scan_time;
     scan.header.frame_id = "laser_frame";
-    scan.angle_min = -1.57;
-    scan.angle_max = 1.57;
+    scan.angle_min = -3.1416;
+    scan.angle_max = 3.1416;
     scan.angle_increment = 3.14 / num_readings;
     scan.time_increment = (1 / laser_frequency) / (num_readings);
     scan.range_min = 0.0;
@@ -46,7 +51,6 @@ int main(int argc, char** argv){
     }
 
     scan_pub.publish(scan);
-    ++count;
-    r.sleep();
   }
+  driver.motorOff();
 }
