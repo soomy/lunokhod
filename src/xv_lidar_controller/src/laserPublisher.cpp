@@ -38,7 +38,7 @@ int main(int argc, char** argv){
     scan.header.frame_id = "laser_frame";
     scan.angle_min = -3.1416;
     scan.angle_max = 3.1416;
-    scan.angle_increment = 3.14 / num_readings;
+    scan.angle_increment = 6.2832 / num_readings;
     scan.time_increment = (1 / laser_frequency) / (num_readings);
     scan.range_min = 0.0;
     scan.range_max = 100.0;
