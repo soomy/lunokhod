@@ -55,36 +55,36 @@ void GetSurrealDriver::motorOff() {
 }
 
 bool GetSurrealDriver::readNextValues(int *angle, double *range, double *intensity) {
-    if(!motorIsOn) motorOn();
-    if(serialCon.isOpen()) {
-        // Read data from serial interface
-        string data = serialCon.readline();
-        // If data contains either the Word Time or RPM return false
-        std::size_t found = data.find(TIME);
-        if (found!=std::string::npos) return false;
-        found = data.find(RPM);
-        if (found!=std::string::npos) return false;
-
-        try {
-		// Get the angle value
-		found = data.find(":");
-		std::istringstream(data.substr(0, found)) >> *angle;
-
-		// Get the range value
-		std::size_t start = found+2;
-		found = data.find("(", start);
-		double range_mm = std::atof(data.substr(start, found-1).c_str());
-		*range = range_mm / 1000.0;
-
-		// Get the intensity value
-		start = found+1;
-		found = data.find(")", start);
-		*intensity = std::atof(data.substr(start, found).c_str());
-	} catch (...) { return false;}
-        
-        return true;
-    }
-    return false;
+  if(!motorIsOn) motorOn();
+  if(serialCon.isOpen()) {
+    // Read data from serial interface
+    string data = serialCon.readline();
+    // If data contains either the Word Time or RPM return false
+    std::size_t found = data.find(TIME);
+    if (found!=std::string::npos) return false;
+    found = data.find(RPM);
+    if (found!=std::string::npos) return false;
+    
+    try {
+      // Get the angle value
+      found = data.find(":");
+      std::istringstream(data.substr(0, found)) >> *angle;
+      
+      // Get the range value
+      std::size_t start = found+2;
+      found = data.find("(", start);
+      double range_mm = std::atof(data.substr(start, found-1).c_str());
+      *range = range_mm / 1000.0;
+      
+      // Get the intensity value
+      start = found+1;
+      found = data.find(")", start);
+      *intensity = std::atof(data.substr(start, found).c_str());
+    } catch (...) { return false;}
+    
+    return true;
+  }
+  return false;
 }
 
 
