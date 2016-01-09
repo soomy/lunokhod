@@ -18,10 +18,6 @@ int main(int argc, char** argv){
   driver.motorOn();
 
   while(n.ok()){
-    /*for(unsigned int i = 0; i < num_readings; ++i){
-      ranges[i] = 1;
-      intensities[i] = 100 + 1;
-    }*/
 
     int angle; double range; double intensity;
 

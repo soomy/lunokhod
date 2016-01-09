@@ -2,6 +2,7 @@
 
 class GetSurrealDriver {
     serial::Serial serialCon;
+    bool motorIsOn;
   public:
     GetSurrealDriver();
     virtual ~GetSurrealDriver();

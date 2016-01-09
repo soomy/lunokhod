@@ -43,16 +43,19 @@ GetSurrealDriver::~GetSurrealDriver() {};
 void GetSurrealDriver::motorOn() {
   if(serialCon.isOpen()) {
     serialCon.write(CMD_MOTOR_ON);
+    motorIsOn = true;
   }  
 }
 
 void GetSurrealDriver::motorOff() {
   if(serialCon.isOpen()) {
     serialCon.write(CMD_MOTOR_OFF);
+    motorIsOn = false;
   }
 }
 
 bool GetSurrealDriver::readNextValues(int *angle, double *range, double *intensity) {
+    if(!motorIsOn) motorOn();
     if(serialCon.isOpen()) {
         // Read data from serial interface
         string data = serialCon.readline();
